@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { 
   Plus, Search, X, Tag, Link as LinkIcon, 
   Calendar, Trash2, Edit3, Lightbulb, Phone, 
-  Target, DollarSign, Filter, ChevronRight,
-  Package, FileText, CheckCircle2, NotebookPen, Brain, Globe, ExternalLink
+  Target, DollarSign, ChevronRight,
+  NotebookPen, Brain, Globe, ExternalLink
 } from 'lucide-react';
 import { BusinessNote, NoteCategory, ProductCard, SavedFinancialReport } from '../../types';
 

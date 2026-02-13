@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { AppState, ColumnMapping, AnalyzedRow, ProductCard, CostItem, SavedFinancialReport, FinancialReportRow, BusinessNote, EconomicsData, TaxFlags } from './types';
 import { readExcelFile, detectColumns, analyzeData } from './utils/analysis';
-import { updateCostRegistry } from './utils/finance'; // Import helper
+import { updateCostRegistry } from './utils/finance'; 
 import FileUpload from './components/FileUpload';
 import Dashboard from './components/Dashboard';
 import ColumnMapper from './components/ColumnMapper';
@@ -13,7 +13,7 @@ import CostRegistry from './components/Finance/CostRegistry';
 import ReportHistory from './components/Finance/ReportHistory';
 import { FinanceDashboard } from './components/Finance/FinanceDashboard';
 import FinanceTrends from './components/Finance/FinanceTrends';
-import ApiIntegration from './components/Finance/ApiIntegration'; // New Import
+import ApiIntegration from './components/Finance/ApiIntegration'; 
 import BusinessHub from './components/BusinessHub/BusinessHub';
 import { Upload, Menu } from 'lucide-react';
 import { supabase } from './utils/supabase';
@@ -327,7 +327,6 @@ const App: React.FC = () => {
 
   const handleApiDataLoaded = (rows: FinancialReportRow[]) => {
     setFinanceData(rows);
-    // Auto-update registry with new items found in API data
     const updatedRegistry = updateCostRegistry(costRegistry, rows);
     if (updatedRegistry.length !== costRegistry.length) {
       handleUpdateCost(updatedRegistry);
@@ -407,6 +406,17 @@ const App: React.FC = () => {
           <div className={`flex-1 flex flex-col relative z-10 ${[AppState.UPLOAD, AppState.PROCESSING, AppState.MAPPING].includes(state) ? 'items-center justify-center' : ''}`}>
             
             {state === AppState.UPLOAD && <FileUpload onFileSelect={handleSEOFileSelect} error={error} />}
+            
+            {state === AppState.PROCESSING && <ProcessingState onComplete={() => setState(AppState.DASHBOARD)} />}
+            
+            {state === AppState.MAPPING && (
+              <ColumnMapper 
+                headers={headers} 
+                initialMapping={mapping} 
+                onConfirm={(m) => { setMapping(m); setAnalyzedData(analyzeData(rawData, m)); setState(AppState.DASHBOARD); }}
+                onCancel={handleResetSEO}
+              />
+            )}
             
             {state === AppState.DASHBOARD && (
               <Dashboard data={analyzedData} onReset={handleResetSEO} onAddToPlanner={(q) => addProductCard(q, 'analysis')} plannedQueries={plannedQueries} />

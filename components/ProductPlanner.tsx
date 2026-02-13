@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   Plus, Search, X, Check, Calendar, 
   Package, Palette, Image as ImageIcon, FileText, UploadCloud,
-  MoreHorizontal, ChevronRight, Sparkles, ExternalLink, Loader2
+  Sparkles, ExternalLink, Loader2
 } from 'lucide-react';
 import { ProductCard, ProductStatus } from '../types';
 import { generateSeoWithTrends } from '../utils/ai';

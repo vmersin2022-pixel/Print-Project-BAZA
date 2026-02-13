@@ -3,10 +3,8 @@ import { FinancialReportRow, CostItem, SavedFinancialReport } from '../../types'
 import { 
   TrendingUp, Table as TableIcon, 
   LayoutDashboard, Save, Wallet,
-  PieChart as PieChartIcon,
-  Percent, AlertCircle, ArrowDownToLine,
-  RefreshCcw, ArrowRight, Package, Box, Search,
-  ArrowUpDown, ArrowUp, ArrowDown, Award, AlertTriangle, Coins, Tag, Upload
+  ArrowDownToLine,
+  ArrowUp, ArrowDown, ArrowUpDown, Box, Search, Upload, RefreshCcw, Tag
 } from 'lucide-react';
 import { updateCostRegistry, parseFinancialReport } from '../../utils/finance';
 import FileUpload from '../FileUpload';

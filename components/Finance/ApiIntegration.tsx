@@ -87,17 +87,17 @@ const ApiIntegration: React.FC<ApiIntegrationProps> = ({ onLoadData }) => {
         </div>
         
         {/* Balance Widget */}
-        {balance && (
-          <div className="bg-gradient-to-r from-emerald-900/40 to-emerald-800/40 border border-emerald-500/30 p-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-right">
-             <div className="p-3 bg-emerald-500/20 rounded-xl">
-               <Wallet className="text-emerald-400 w-6 h-6" />
-             </div>
-             <div>
-               <p className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider">Доступно к выводу</p>
-               <p className="text-2xl font-black text-white">{balance.for_withdraw.toLocaleString()} ₽</p>
-             </div>
-          </div>
-        )}
+        <div className="bg-gradient-to-r from-emerald-900/40 to-emerald-800/40 border border-emerald-500/30 p-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-right">
+           <div className="p-3 bg-emerald-500/20 rounded-xl">
+             {loadingBalance ? <Loader2 className="animate-spin text-emerald-400 w-6 h-6" /> : <Wallet className="text-emerald-400 w-6 h-6" />}
+           </div>
+           <div>
+             <p className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider">Доступно к выводу</p>
+             <p className="text-2xl font-black text-white">
+               {balance ? `${balance.for_withdraw.toLocaleString()} ₽` : '---'}
+             </p>
+           </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
