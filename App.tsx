@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { AppState, ColumnMapping, AnalyzedRow, ProductCard, CostItem, SavedFinancialReport, FinancialReportRow, BusinessNote, EconomicsData, TaxFlags } from './types';
 import { readExcelFile, detectColumns, analyzeData } from './utils/analysis';
+import { updateCostRegistry } from './utils/finance'; // Import helper
 import FileUpload from './components/FileUpload';
 import Dashboard from './components/Dashboard';
 import ColumnMapper from './components/ColumnMapper';
@@ -12,6 +13,7 @@ import CostRegistry from './components/Finance/CostRegistry';
 import ReportHistory from './components/Finance/ReportHistory';
 import { FinanceDashboard } from './components/Finance/FinanceDashboard';
 import FinanceTrends from './components/Finance/FinanceTrends';
+import ApiIntegration from './components/Finance/ApiIntegration'; // New Import
 import BusinessHub from './components/BusinessHub/BusinessHub';
 import { Upload, Menu } from 'lucide-react';
 import { supabase } from './utils/supabase';
@@ -323,6 +325,16 @@ const App: React.FC = () => {
     await supabase.from('financial_reports').delete().eq('id', id);
   };
 
+  const handleApiDataLoaded = (rows: FinancialReportRow[]) => {
+    setFinanceData(rows);
+    // Auto-update registry with new items found in API data
+    const updatedRegistry = updateCostRegistry(costRegistry, rows);
+    if (updatedRegistry.length !== costRegistry.length) {
+      handleUpdateCost(updatedRegistry);
+    }
+    setState(AppState.FINANCE_DETAILS);
+  };
+
   const plannedQueries = useMemo(() => productCards.map(c => c.query), [productCards]);
 
   return (
@@ -426,6 +438,10 @@ const App: React.FC = () => {
                 onDataLoaded={setFinanceData}
                 onSaveReport={handleSaveReport}
               />
+            )}
+
+            {state === AppState.FINANCE_API && (
+              <ApiIntegration onLoadData={handleApiDataLoaded} />
             )}
 
             {state === AppState.FINANCE_TRENDS && <FinanceTrends reports={savedReports} />}

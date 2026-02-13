@@ -3,7 +3,7 @@ import { AppState } from '../types';
 import { 
   LayoutGrid, Package, Calculator, Sparkles, 
   FileText, ChevronDown, ChevronRight, TrendingUp,
-  NotebookPen, Cloud, X
+  NotebookPen, Cloud, X, CloudLightning
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -99,6 +99,15 @@ const Sidebar: React.FC<SidebarProps> = ({ state, setState, cardsCount, onUpload
                 className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${state === AppState.FINANCE_DETAILS ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-slate-300'}`}
               >
                 Детализация
+              </button>
+              <button 
+                onClick={() => handleNav(AppState.FINANCE_API)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium transition-colors ${state === AppState.FINANCE_API ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-slate-300'}`}
+              >
+                <div className="flex items-center gap-2">
+                   <CloudLightning size={12} className={state === AppState.FINANCE_API ? 'text-indigo-400' : ''} />
+                   WB Синхронизация
+                </div>
               </button>
               <button 
                 onClick={() => handleNav(AppState.FINANCE_TRENDS)}

@@ -16,6 +16,18 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       open: true,
+      proxy: {
+        '/wb-api/stats': {
+          target: 'https://statistics-api.wildberries.ru',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/wb-api\/stats/, ''),
+        },
+        '/wb-api/finance': {
+          target: 'https://finance-api.wildberries.ru',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/wb-api\/finance/, ''),
+        },
+      }
     },
     // Это критически важно для работы process.env в браузере
     define: {
