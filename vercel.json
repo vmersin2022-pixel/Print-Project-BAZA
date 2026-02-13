@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/wb-api/stats/:path*",
+      "destination": "https://statistics-api.wildberries.ru/:path*"
+    },
+    {
+      "source": "/wb-api/finance/:path*",
+      "destination": "https://finance-api.wildberries.ru/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
