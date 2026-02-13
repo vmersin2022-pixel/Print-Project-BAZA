@@ -54,6 +54,15 @@ const ApiIntegration: React.FC<ApiIntegrationProps> = ({ onLoadData }) => {
 
   const handleStartLoad = async () => {
     if (!token) return;
+
+    // VALIDATION: Future date check
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (new Date(dateFrom) > today || new Date(dateTo) > today) {
+      setLogs([`[${new Date().toLocaleTimeString()}] ⚠️ Ошибка: Нельзя запрашивать данные из будущего.`]);
+      return;
+    }
+
     setIsProcessing(true);
     setLogs([]);
     

@@ -63,8 +63,9 @@ export const fetchSalesReports = async (
 
   while (hasMore) {
     const url = new URL(`${window.location.origin}${STATS_PROXY}/api/v5/supplier/reportDetailByPeriod`);
-    url.searchParams.append('dateFrom', dateFrom);
-    url.searchParams.append('dateTo', dateTo);
+    // WB API requires RFC3339 format (YYYY-MM-DDTHH:mm:ss)
+    url.searchParams.append('dateFrom', dateFrom + 'T00:00:00');
+    url.searchParams.append('dateTo', dateTo + 'T23:59:59');
     url.searchParams.append('rrdid', rrdid.toString());
     url.searchParams.append('limit', '100000'); // Max limit
 
@@ -92,9 +93,7 @@ export const fetchSalesReports = async (
       // Safety break to prevent infinite loops if API is weird
       if (data.length < 100) { 
          // Sometimes small chunks mean end, but standard is empty array. 
-         // Keep going until empty array if adhering strictly to docs, 
-         // but usually max limit is not hit if < 100.
-         // Let's rely on empty array check above.
+         // Keep going until empty array if adhering strictly to docs.
       }
 
       // Small throttle to be nice
@@ -130,7 +129,6 @@ const mapApiRowsToApp = (apiRows: any[]): FinancialReportRow[] => {
     // Document Types
     docType: row.doc_type_name || '',
     paymentReason: row.supplier_oper_name || '', // "Продажа", "Логистика", etc.
-    logisticsType: row.supplier_oper_name || '', // Fallback for strict split logic
     
     // Dates
     orderDate: row.order_dt || '',
@@ -148,6 +146,15 @@ const mapApiRowsToApp = (apiRows: any[]): FinancialReportRow[] => {
     totalDiscountPercent: 0,
     retailPriceWithDisc: Number(row.retail_price_withdisc_rub) || 0,
     commissionPercent: Number(row.commission_percent) || 0,
+    commissionPercentNoVat: Number(row.commission_percent) || 0, // Fallback if missing
+    baseKvvNoVat: 0,
+    rewardBeforeService: 0,
+    pvzReward: 0,
+    
+    // Финансы, Налоги, Эквайринг
+    acquiringRub: 0, // Not typically in Statistics report, usually in Finance report
+    acquiringPercent: 0,
+    acquiringType: '',
     commissionRub: 0, // Need to calc or find specific field if available (ppvz_sales_commission)
     vatOnCommission: 0, 
     
@@ -159,6 +166,7 @@ const mapApiRowsToApp = (apiRows: any[]): FinancialReportRow[] => {
     storageRub: 0, // Usually separate report
     otherDeductionsRub: 0,
     acceptanceRub: 0,
+    warehouseFixCoeff: 0,
     
     // Counters (Inferred)
     deliveryCount: (row.supplier_oper_name === 'Логистика' && Number(row.delivery_rub) > 0) ? 1 : 0,
@@ -167,6 +175,20 @@ const mapApiRowsToApp = (apiRows: any[]): FinancialReportRow[] => {
     // Extra
     warehouse: row.office_name || '',
     country: row.site_country || '',
-    raw: row // Keep original for debug
+    // Updated to support 'Тип операции' which corresponds to Column AQ in some reports
+    // Важно: WB часто меняет заголовки, добавляем самый актуальный длинный вариант
+    logisticsType: pStr(
+      row['Виды логистики, штрафов и корректировок ВВ'] || 
+      row['Тип логистики'] || 
+      row['Вид логистики'] || 
+      row['Тип операции'] ||
+      row.supplier_oper_name
+    ),
+    
+    // Служебные поля
+    raw: row
   } as FinancialReportRow));
 };
+
+// Helper to safely parse strings
+const pStr = (val: any): string => String(val || '').trim();
